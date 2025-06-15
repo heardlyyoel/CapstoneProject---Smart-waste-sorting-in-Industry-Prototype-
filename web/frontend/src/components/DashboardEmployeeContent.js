@@ -1,6 +1,22 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const DashboardEmployeeContent = () => {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const getCameraStream = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (err) {
+        console.error('Gagal mengakses kamera:', err);
+      }
+    };
+    getCameraStream();
+  }, []);
+
   const handleReport = () => {
     alert("Report sent to admin (dummy)");
   };
@@ -15,9 +31,16 @@ const DashboardEmployeeContent = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: '10px'
+        borderRadius: '10px',
+        overflow: 'hidden'
       }}>
-        <p>[Camera Stream - Dummy]</p>
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        />
       </div>
       <button onClick={handleReport} style={{ marginTop: '20px' }}>
         ⚠️ Report Error to Admin
